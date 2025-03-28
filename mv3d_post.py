@@ -24,7 +24,6 @@ EpsYZ = 17
 EpsXZ = 18
 
 
-
 def vector_to_matrix(vector):
     c_matrix = np.zeros([6, 6])
     k = 0
@@ -58,13 +57,13 @@ def plt_matrix(matrix, format_str=': .3f', scale=1, filename=None):
         fig.savefig(filename + ".png", dpi=300)
         fig.savefig(filename)
 
+
 def get_A_b_from_data(data, inverse=False):
+    stress = data[SX:SXZ + 1]
+    strain = data[EpsX:EpsXZ + 1]
+
     if inverse:
-        strain = data[SX:SXZ + 1]
-        stress = data[EpsX:EpsXZ + 1]
-    else:
-        stress = data[SX:SXZ + 1]
-        strain = data[EpsX:EpsXZ + 1]
+        stress, strain = strain, stress
 
     C = np.zeros([6, 21], dtype=float)
 
@@ -84,13 +83,12 @@ def get_A_b_from_data(data, inverse=False):
 
 # Solve system of linear equations using minimizing the residual algorithm (least squares)
 def solve_linear_equations(A, b):
-    x, residuals, rank, s = np.linalg.lstsq(A, b, rcond=None)
+    x, residuals, rank, s = np.linalg.lstsq(A, b)
     print("Solving lstsq info:")
     print("\tResiduals: ", residuals)
     print("\tRank: ", rank)
     print("\tSingular values: ", s)
     print()
-    # return x, residuals, rank, s
     return x
 
 
@@ -104,63 +102,54 @@ def process_dataset(hdf5, data_path):
     for list_item in data_list:
         if list_item.startswith('ls_'):
             data = hdf5.read_data("/" + data_path + "/" + list_item + "/results_avg")
-            lb, lA = get_A_b_from_data(data)
+            lb, lA = get_A_b_from_data(data, inverse=True)
             b = np.append(lb, b, axis=0)
             A = np.append(lA, A, axis=0)
 
     # Solve linear equations
     x = solve_linear_equations(A, b)
 
-    C_matrix = vector_to_matrix(x)
+    S_matrix = vector_to_matrix(x)
 
+    print("S matrix, 1/TPa = ")
+    print_matrix(S_matrix * 1e12, format_str=' >7.2f')
+    print()
+
+    C_matrix = np.linalg.inv(S_matrix)
     print("C matrix, GPa = ")
     print_matrix(C_matrix / 1e9, format_str=' >7.2f')
 
-    S_matrix = np.linalg.inv(C_matrix)
+    print("C Eigen values, GPa =", np.linalg.eigvals(C_matrix) / 1e9)
     print()
 
-    print("S matrix, GPa = ")
-    print_matrix(S_matrix)
-
-    S_diag = 1 / np.diag(S_matrix)
-
+    S_inv_diag = 1 / np.diag(S_matrix)
+    print('Ex = {: .3e}'.format(S_inv_diag[0]))
+    print('Ey = {: .3e}'.format(S_inv_diag[1]))
+    print('Ez = {: .3e}'.format(S_inv_diag[2]))
     print()
-    print('Ex = {: .3e}'.format(S_diag[0]))
-    print('Ey = {: .3e}'.format(S_diag[1]))
-    print('Ez = {: .3e}'.format(S_diag[2]))
+    print('Gxy = {: .3e}'.format(S_inv_diag[3]))
+    print('Gyz = {: .3e}'.format(S_inv_diag[4]))
+    print('Gxz = {: .3e}'.format(S_inv_diag[5]))
     print()
-    print('Gxy = {: .3e}'.format(S_diag[3]))
-    print('Gyz = {: .3e}'.format(S_diag[4]))
-    print('Gxz = {: .3e}'.format(S_diag[5]))
 
     P_matrix = np.copy(S_matrix)
     for i in range(0, 6):
-        P_matrix[i, :] *= -S_diag
-
-    print()
+        P_matrix[i, :] *= -S_inv_diag
 
     print("Poisson's matrix")
     print_matrix(P_matrix, format_str=' .3f')
 
     print()
 
-    print("Eigen values =", np.linalg.eigvals(C_matrix))
-
-
     hdf5.rewrite_data("/" + data_path + '/C_matrix', C_matrix)
     hdf5.rewrite_data("/" + data_path + '/S_matrix', S_matrix)
     hdf5.rewrite_data("/" + data_path + '/P_matrix', P_matrix)
-
-    # plt_matrix(S_matrix * 1e12, format_str=': .3f')
-    # plt_matrix(C_matrix / 1e9, format_str=': .3f')
-    # plt_matrix(P_matrix, format_str=': .3f')
 
 
 def main():
     #path = R'd:\temp\1\build-MatViz3D-Desktop_Qt_6_3_1_MinGW_64_bit-Debug\\'
     path = "z:\\ans_proj\\matviz\\"
     filename = './result-25-5.hdf5'
-    #filename = './result-5-5.hdf5'
 
     # Create an instance of the HDF5Operator class
     hdf5 = HDF5Operator.HDF5Operator(path + filename)
