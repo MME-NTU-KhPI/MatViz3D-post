@@ -180,10 +180,10 @@ def main():
     
     mv3d.plt_matrix(column_means_poissons.reshape((6,6)), format_str=': .3f', filename=filename + '_poissons_mean.eps')
 
-    # plot_hist_set(df_mudulus / 1e9, nrows=2, ncol=3, units="GPa",
-    #                wspace=0.5, hspace=0.6, fontsize=6, filename=filename+'modlulus.eps')
-    # plot_hist_set(df_poissons, nrows=6, ncol=6, fontsize=6, 
-    #               hspace=0.7, wspace=0.8, filename=filename+'poissons.eps')
+    plot_hist_set(df_mudulus / 1e9, nrows=2, ncol=3, units="GPa",
+                  wspace=0.5, hspace=0.6, fontsize=6, filename=filename+'modlulus.eps')
+    plot_hist_set(df_poissons, nrows=6, ncol=6, fontsize=6,
+                  hspace=0.7, wspace=0.8, filename=filename+'poissons.eps')
 
 
 

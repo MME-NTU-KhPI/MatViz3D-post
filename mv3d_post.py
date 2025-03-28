@@ -158,12 +158,12 @@ def process_dataset(hdf5, data_path):
 
 def main():
     #path = R'd:\temp\1\build-MatViz3D-Desktop_Qt_6_3_1_MinGW_64_bit-Debug\\'
-    path = ""
-    filename = './result-Mg-25-5.hdf5'
+    path = "z:\\ans_proj\\matviz\\"
+    filename = './result-25-5.hdf5'
     #filename = './result-5-5.hdf5'
 
     # Create an instance of the HDF5Operator class
-    hdf5 = HDF5Operator(path + filename)
+    hdf5 = HDF5Operator.HDF5Operator(path + filename)
     dataset_list = hdf5.list_datasets('/')
 
     print("Open file ", path + filename)
