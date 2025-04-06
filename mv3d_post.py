@@ -2,6 +2,8 @@ import h5py
 import numpy as np
 import HDF5Operator
 import matplotlib.pyplot as plt
+import argparse
+import os
 
 ID = 0
 X = 1
@@ -63,7 +65,15 @@ def get_A_b_from_data(data, inverse=False):
     strain = data[EpsX:EpsXZ + 1]
 
     if inverse:
+<<<<<<< HEAD
         stress, strain = strain, stress
+=======
+        strain = data[SX:SXZ + 1]    
+        stress = data[EpsX:EpsXZ + 1]
+    else:
+        stress = data[SX:SXZ + 1]
+        strain = data[EpsX:EpsXZ + 1]
+>>>>>>> dc5cad5 (allow set file name as script parameter)
 
     C = np.zeros([6, 21], dtype=float)
 
@@ -147,15 +157,30 @@ def process_dataset(hdf5, data_path):
 
 
 def main():
+<<<<<<< HEAD
     #path = R'd:\temp\1\build-MatViz3D-Desktop_Qt_6_3_1_MinGW_64_bit-Debug\\'
     path = "z:\\ans_proj\\matviz\\"
     filename = './result-25-5.hdf5'
 
     # Create an instance of the HDF5Operator class
     hdf5 = HDF5Operator.HDF5Operator(path + filename)
+=======
+    # Print the current working directory
+    print(f"Current working directory: {os.getcwd()}")
+    # Create an argument parser
+    parser = argparse.ArgumentParser(description="Process HDF5 dataset.")
+    parser.add_argument('filename', type=str, help='Path to the HDF5 file')
+    args = parser.parse_args()
+
+    filename = args.filename
+
+
+    # Create an instance of the HDF5Operator class
+    hdf5 = HDF5Operator.HDF5Operator(filename)
+>>>>>>> dc5cad5 (allow set file name as script parameter)
     dataset_list = hdf5.list_datasets('/')
 
-    print("Open file ", path + filename)
+    print("Open file ", filename)
 
     print("Loading data....")
 
