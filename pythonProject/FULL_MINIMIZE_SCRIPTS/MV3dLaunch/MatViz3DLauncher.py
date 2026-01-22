@@ -43,7 +43,7 @@ class MatViz3DLauncher:
             '--orientation_angle_c', str(orientation_angle_c),
             '--wave_coefficient', str(wave_coefficient),
             '--algorithm', 'Probability Algorithm',
-            ' --ellipse_order', str(ellipse_order),
+            '--ellipse_order', str(ellipse_order),
             '--autostart',
             '--output', output_file,
             '--nogui'
@@ -59,5 +59,6 @@ class MatViz3DLauncher:
         if not os.path.exists(output_file):
             logging.error(f"File {output_file} was not created.")
             return False
+
 
         return output_file
