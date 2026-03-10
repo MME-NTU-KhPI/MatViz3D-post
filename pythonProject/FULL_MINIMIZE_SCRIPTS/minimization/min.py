@@ -66,12 +66,12 @@ base_params = np.array([
 ], dtype=float)
 
 # TODO: Ініціалізація запуска MatViz3D
-exe_path = r"D:\Project(MatViz3D)\Random\current_build\debug\MatViz3D.exe"
+exe_path = r".\debug\MatViz3D.exe"
 launcher = MatViz3DLauncher(exe_path)
 
 # TODO:  Створення каталогу для виведення
 # output_folder = r"D:\Project(MatViz3D)\Random\Paper_Optimisation\test\iter\EnergyDistance_norm_allTensor_LOG"
-output_folder = r"D:\Project(MatViz3D)\Random\Paper_Optimisation\test\iter\test_3"
+output_folder = r".\test"
 os.makedirs(output_folder, exist_ok=True)
 
 # TODO: Опції аналізу шарів
@@ -95,13 +95,13 @@ ITER_COUNTER = count(1)
 USE_LOG_SPACE = False
 
 # Шляхи до файлів з цільовими значеннями
-TARGET_FILE_NORMAL = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\statistics_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_NORMAL = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\statistics_image_properties_(AZ31_imgA).csv"
 
-TARGET_FILE_LOG = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\Arcsinh_statistics_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_LOG = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\Arcsinh_statistics_image_properties_(AZ31_imgA).csv"
 
-TARGET_FILE_DIST = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_DIST = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_image_properties_(AZ31_imgA).csv"
 
-TARGET_FILE_DIST_LOG = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_Arcsinh_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_DIST_LOG = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_Arcsinh_image_properties_(AZ31_imgA).csv"
 
 if selected_metric_type == 'Energy Distance':
     target_csv_path = TARGET_FILE_DIST_LOG if USE_LOG_SPACE else TARGET_FILE_DIST
@@ -1179,3 +1179,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
