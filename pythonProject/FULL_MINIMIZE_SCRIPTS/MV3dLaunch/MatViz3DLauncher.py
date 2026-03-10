@@ -1,6 +1,6 @@
-import subprocess
-import os
 import logging
+import os
+import subprocess
 
 # Logging configuration
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,7 +15,7 @@ class MatViz3DLauncher:
 
     def start(self, size, concentration, halfaxis_a, halfaxis_b, halfaxis_c,
               orientation_angle_a, orientation_angle_b, orientation_angle_c,
-              wave_coefficient, ellipse_order, output_file):
+              wave_coefficient, wave_spread, initial_nuclei_count, ellipse_order, output_file):
         """
         Run MatViz3D with the given parameters.
 
@@ -42,6 +42,8 @@ class MatViz3DLauncher:
             '--orientation_angle_b', str(orientation_angle_b),
             '--orientation_angle_c', str(orientation_angle_c),
             '--wave_coefficient', str(wave_coefficient),
+            '--wave_spread', str(wave_spread),
+            '--initial_nuclei_count', str(initial_nuclei_count),
             '--algorithm', 'Probability Algorithm',
             '--ellipse_order', str(ellipse_order),
             '--autostart',
@@ -50,15 +52,28 @@ class MatViz3DLauncher:
         ]
 
         try:
-            result = subprocess.run(params, capture_output=True, text=True, check=True)
-            logging.debug(f"Output result: {result.stdout}")
-        except subprocess.CalledProcessError as e:
-            logging.error(f"Error running the .exe: {e.stderr}")
+            process = subprocess.Popen(
+                params,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
+
+            for line in process.stdout:
+                print(line, end='', flush=True)
+
+            process.wait()
+
+            if process.returncode != 0:
+                logging.error(f"MatViz3D завершився з помилкою {process.returncode}")
+                return False
+
+        except Exception as e:
+            logging.error(f"Помилка при запуску .exe: {e}")
             return False
 
         if not os.path.exists(output_file):
-            logging.error(f"File {output_file} was not created.")
             return False
-
 
         return output_file
