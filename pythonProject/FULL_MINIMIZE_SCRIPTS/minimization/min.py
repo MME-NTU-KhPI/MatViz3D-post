@@ -26,7 +26,7 @@ from skimage.measure import regionprops
 from MatViz3DLauncher import MatViz3DLauncher
 
 # TODO:  Метод оптимізації, ('SLSQP', 'L-BFGS-B', 'Dual Annealing', 'basinhopping', 'Differential Evolution', 'Manual Sweep')
-selected_method = 'Dual Annealing'
+selected_method = 'Differential Evolution'
 selected_metric_type = 'Energy Distance'  # або 'MSE' 'SMAPE' 'MSPE' 'Energy Distance'
 
 # TODO:   Глобальні змінні
@@ -47,31 +47,47 @@ selected_features = [
 # ]
 
 # selected_metrics = ['Mean', 'Std', 'Median', 'Q1', 'Q3']
-selected_metrics = ['Mean', 'Q1', 'Q3']
+selected_metrics = ['Mean', 'Q1', 'Q3', 'Std']
 
 # TODO: Фіксований розмір куба
 FIXED_SIZE = 130
 
 # TODO: Обмеження
-bounds = [(0.01, 0.2), (0.65, 1.5), (0.65, 1.5), (1, 6), (1, 60), (0.1, 50), (0, 1000)]
+bounds = [
+    (0.01, 0.2),  # concentration
+    (0.65, 1.7),  # halfaxis_a
+    (0.65, 1.7),  # halfaxis_b
+    (0.65, 1.7),  # halfaxis_c
+    (1, 6),       # ellipse_order
+    (1, 60),      # wave_coefficient
+    (0.1, 50),    # wave_spread
+    (1, 1000),    # initial_nuclei_count
+    (0, 360),     # orientation_angle_a
+    (0, 360),     # orientation_angle_b
+    (0, 360)      # orientation_angle_c
+]
 
 base_params = np.array([
-    0.1,  # concentration
-    1.5,  # halfaxis_b
-    1.5,  # halfaxis_c
-    1.7,  # ellipse_order
-    15.0,  # wave_coefficient
-    2.0,  # wave_spread
-    1  # initial_nuclei_count
+    0.007,  # concentration
+    1.7,    # halfaxis_a
+    1.7,    # halfaxis_b
+    0.8,    # halfaxis_c
+    6,      # ellipse_order
+    20.0,   # wave_coefficient
+    50,     # wave_spread
+    1,      # initial_nuclei_count
+    0.0,    # orientation_angle_a
+    0.0,    # orientation_angle_b
+    0.0     # orientation_angle_c
 ], dtype=float)
 
 # TODO: Ініціалізація запуска MatViz3D
-exe_path = r".\debug\MatViz3D.exe"
+exe_path = r"D:\Project(MatViz3D)\Random\current_build\debug\MatViz3D.exe"
 launcher = MatViz3DLauncher(exe_path)
 
 # TODO:  Створення каталогу для виведення
 # output_folder = r"D:\Project(MatViz3D)\Random\Paper_Optimisation\test\iter\EnergyDistance_norm_allTensor_LOG"
-output_folder = r".\test"
+output_folder = r"D:\Project(MatViz3D)\Random\Paper_Optimisation\test\iter\test_1"
 os.makedirs(output_folder, exist_ok=True)
 
 # TODO: Опції аналізу шарів
@@ -79,13 +95,14 @@ os.makedirs(output_folder, exist_ok=True)
 #       'sample' - аналізувати 1 шар, пропустити SAMPLE_SKIP шарів
 #       'single' - аналізувати тільки один шар із індексом SINGLE_LAYER_INDEX
 ANALYSIS_MODE = 'sample'  # 'all', 'sample', 'single'
-SAMPLE_SKIP = 4  # якщо mode == 'sample', то після кожного проаналізованого шару пропускаємо SAMPLE_SKIP шарів
+SAMPLE_SKIP = 10  # якщо mode == 'sample', то після кожного проаналізованого шару пропускаємо SAMPLE_SKIP шарів
 SAMPLE_OFFSET = 0  # початковий індекс для sample (0..cube_size-1)
 SINGLE_LAYER_INDEX = 0  # індекс шару для mode == 'single'
 
 # TODO: Обрати осі для розрізання
 # ['x'], ['y'], ['z'], ['x', 'y'], ['x', 'z'], ['y', 'z'], або ['x', 'y', 'z']
 SELECTED_AXES = ['x']  # за замовчуванням — тільки по осі Z
+# SELECTED_AXES = ['y']
 
 # лічильник ітерацій для назв файлів
 ITER_COUNTER = count(1)
@@ -95,13 +112,13 @@ ITER_COUNTER = count(1)
 USE_LOG_SPACE = False
 
 # Шляхи до файлів з цільовими значеннями
-TARGET_FILE_NORMAL = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\statistics_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_NORMAL = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\statistics_image_properties_(AZ31_imgA).csv"
 
-TARGET_FILE_LOG = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\Arcsinh_statistics_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_LOG = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\Arcsinh_statistics_image_properties_(AZ31_imgA).csv"
 
-TARGET_FILE_DIST = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_DIST = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_image_properties_(AZ31_imgA).csv"
 
-TARGET_FILE_DIST_LOG = r".\FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_Arcsinh_image_properties_(AZ31_imgA).csv"
+TARGET_FILE_DIST_LOG = r"D:\University\MatViz\1FULL_MINIMIZE_SCRIPTS\AZ31_iA\processed_output_Arcsinh\processed_Arcsinh_image_properties_(AZ31_imgA).csv"
 
 if selected_metric_type == 'Energy Distance':
     target_csv_path = TARGET_FILE_DIST_LOG if USE_LOG_SPACE else TARGET_FILE_DIST
@@ -155,6 +172,7 @@ csv_headers = [
     "wave_coefficient", "wave_spread", "initial_nuclei_count", "concentration",
     "halfaxis_a", "halfaxis_b", "halfaxis_c",
     "ellipse_order",
+    "angle_a", "angle_b", "angle_c",
 ]
 
 # значення selected features
@@ -183,8 +201,9 @@ def log_iteration_to_csv(
 ):
     file_exists = os.path.isfile(csv_params_path)
 
-    concentration, halfaxis_b, halfaxis_c, ellipse_order, wave_coefficient, wave_spread, initial_nuclei_count = params
-    halfaxis_a = halfaxis_b
+    (concentration, halfaxis_a, halfaxis_b, halfaxis_c, ellipse_order,
+     wave_coefficient, wave_spread, initial_nuclei_count,
+     angle_a, angle_b, angle_c) = params
 
     initial_nuclei_count = int(round(initial_nuclei_count))
 
@@ -198,6 +217,9 @@ def log_iteration_to_csv(
         "halfaxis_b": halfaxis_b,
         "halfaxis_c": halfaxis_c,
         "ellipse_order": ellipse_order,
+        "angle_a": angle_a,
+        "angle_b": angle_b,
+        "angle_c": angle_c,
         "Total_Error": total_error
     }
 
@@ -223,13 +245,9 @@ def log_iteration_to_csv(
 
 
 param_names = [
-    "concentration",
-    "halfaxis_b",
-    "halfaxis_c",
-    "ellipse_order",
-    "wave_coefficient",
-    "wave_spread",
-    "initial_nuclei_count"
+    "concentration", "halfaxis_a", "halfaxis_b", "halfaxis_c",
+    "ellipse_order", "wave_coefficient", "wave_spread", "initial_nuclei_count",
+    "orientation_angle_a", "orientation_angle_b", "orientation_angle_c"
 ]
 
 
@@ -313,7 +331,7 @@ def process_layer(index, layers, axis):
             grain_mask = (layer == grain_color)
             labeled_grains = skimage.measure.label(grain_mask, connectivity=2)
             for region in regionprops(labeled_grains):
-                if region.area <= 5:
+                if region.area <= 20:
                     continue
                 if np.any(region.coords[:, 0] == 0) or np.any(region.coords[:, 0] == layer.shape[0] - 1) \
                         or np.any(region.coords[:, 1] == 0) or np.any(region.coords[:, 1] == layer.shape[1] - 1):
@@ -340,7 +358,7 @@ def process_layer(index, layers, axis):
                         props['scale_factor'] = major / minor
 
                 if 'Orientation' in selected_features:
-                    props['Orientation'] = float(region.orientation)
+                    props['Orientation'] = np.degrees(float(region.orientation))
 
                 if any(f in selected_features for f in inertia_needed.union(principal_needed)):
                     it = region.inertia_tensor
@@ -845,8 +863,9 @@ def calculate_energy_distance(model_data, exp_data):
 
 
 def minimize_properties(params):
-    concentration, halfaxis_b, halfaxis_c, ellipse_order, wave_coefficient, wave_spread, initial_nuclei_count = params
-    halfaxis_a = halfaxis_b
+    (concentration, halfaxis_a, halfaxis_b, halfaxis_c, ellipse_order,
+     wave_coefficient, wave_spread, initial_nuclei_count,
+     angle_a, angle_b, angle_c) = params
 
     initial_nuclei_count = int(round(initial_nuclei_count))
 
@@ -854,9 +873,13 @@ def minimize_properties(params):
     output_file = r".\cube_output.csv"
     output_props_file = r".\properties_output.csv"
 
-    generated_file = start(FIXED_SIZE, concentration, halfaxis_a, halfaxis_b, halfaxis_c,
-                           0, 0, 0,
-                           wave_coefficient, wave_spread, initial_nuclei_count, ellipse_order, output_file)
+    generated_file = start(
+        FIXED_SIZE, concentration, halfaxis_a, halfaxis_b, halfaxis_c,
+        angle_a, angle_b, angle_c,
+        wave_coefficient, wave_spread, initial_nuclei_count, ellipse_order,
+        output_file
+    )
+
     if not generated_file:
         logging.error("Не вдалося створити файл.")
         return np.inf
@@ -1069,7 +1092,7 @@ def optimize_properties():
     if selected_method in ['SLSQP', 'L-BFGS-B']:
         print("Вибір найкращої стартової точки...")
         # x0 = find_best_starting_point(bounds)
-        x0 = [0.075, 0.9, 1, 2.7, 15, 2.0, 7]
+        x0 = [0.075, 0.9, 1, 2.7, 15, 2.0, 7, 0.0, 0.0, 0.0]
 
         result = minimize(
             minimize_properties,
@@ -1082,7 +1105,7 @@ def optimize_properties():
     elif selected_method == 'basinhopping':
         print("Вибір найкращої стартової точки...")
         # x0 = find_best_starting_point(bounds)
-        x0 = [0.075, 0.9, 1, 2.7, 15, 2.0, 7]
+        x0 = [0.075, 0.9, 1, 2.7, 15, 2.0, 7, 0.0, 0.0, 0.0]
 
         minimizer_kwargs = {
             "method": "L-BFGS-B",
@@ -1127,14 +1150,14 @@ def optimize_properties():
 
     elif selected_method == 'Manual Sweep':
         # TODO: sweep_param
-        sweep_param = "wave_spread"
+        sweep_param = "halfaxis_a"
         sweep_index = param_names.index(sweep_param)
 
         sweep_results = manual_parameter_sweep(
             param_index=sweep_index,
             base_params=base_params,
             bounds=bounds,
-            n_points=30
+            n_points=20
         )
         logging.info(f"Manual sweep finished")
 
@@ -1179,4 +1202,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
