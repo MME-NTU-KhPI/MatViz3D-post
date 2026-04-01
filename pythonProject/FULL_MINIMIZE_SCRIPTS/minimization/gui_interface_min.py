@@ -1,9 +1,9 @@
 import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
+
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 from MatViz3DLauncher import MatViz3DLauncher
@@ -41,12 +41,16 @@ class ManualOptimizerApp:
         self.param_entries = {}
         params_list = [
             ("concentration", core.base_params[0]),
+            ("halfaxis_a", core.base_params[1]),
             ("halfaxis_b", core.base_params[1]),
             ("halfaxis_c", core.base_params[2]),
             ("ellipse_order", core.base_params[3]),
             ("wave_coefficient", core.base_params[4]),
             ("wave_spread", core.base_params[5]),
-            ("initial_nuclei_count", core.base_params[6])
+            ("initial_nuclei_count", core.base_params[6]),
+            ("orientation_angle_a", core.base_params[7]),
+            ("orientation_angle_b", core.base_params[8]),
+            ("orientation_angle_c", core.base_params[9])
         ]
 
         for label, val in params_list:
@@ -87,10 +91,11 @@ class ManualOptimizerApp:
     def run_calculation(self):
         try:
             self.run_counter += 1
-            p_vals = [float(self.param_entries[name].get()) for name in [
-                "concentration", "halfaxis_b", "halfaxis_c", "ellipse_order",
-                "wave_coefficient", "wave_spread", "initial_nuclei_count"
-            ]]
+            names = ["concentration", "halfaxis_a", "halfaxis_b", "halfaxis_c",
+                     "ellipse_order", "wave_coefficient", "wave_spread", "initial_nuclei_count",
+                     "orientation_angle_a", "orientation_angle_b", "orientation_angle_c"]
+
+            p_vals = [float(self.param_entries[name].get()) for name in names]
             current_metric = self.metric_combo.get()
 
             # Визначаємо шлях для РОЗРАХУНКУ похибки
@@ -108,11 +113,13 @@ class ManualOptimizerApp:
             output_file = r".\gui_cube_output.csv"
             output_props_file = r".\gui_properties_output.csv"
 
-            halfaxis_a = p_vals[1]
-            rounded_nuclei = int(round(p_vals[6]))
-
-            generated = core.start(core.FIXED_SIZE, p_vals[0], halfaxis_a, p_vals[1], p_vals[2],
-                                   0, 0, 0, p_vals[4], p_vals[5], rounded_nuclei, p_vals[3], output_file)
+            generated = core.start(
+                core.FIXED_SIZE,
+                p_vals[0], p_vals[1], p_vals[2], p_vals[3],  # conc, a, b, c
+                p_vals[8], p_vals[9], p_vals[10],  # angles
+                p_vals[5], p_vals[6], int(round(p_vals[7])), p_vals[4],  # wc, ws, nuclei, order
+                output_file
+            )
 
             if not generated:
                 raise Exception("MatViz3D не зміг створити файл.")
@@ -123,21 +130,22 @@ class ManualOptimizerApp:
             target_data = core.load_target_data(target_path, current_metric, core.selected_features)
             dist_data = core.load_target_data(dist_path, 'Energy Distance', core.selected_features)
 
-            self.display_results(sim_df, stats, target_data, dist_data, current_metric, p_vals, rounded_nuclei)
+            self.display_results(sim_df, stats, target_data, dist_data, current_metric, p_vals)
 
         except Exception as e:
             messagebox.showerror("Помилка", f"Стався збій: {str(e)}")
         finally:
             self.run_btn.config(state=tk.NORMAL, text="ЗАПУСТИТИ РОЗРАХУНОК")
 
-    def display_results(self, sim_df, sim_stats, target_data, dist_data, metric_type, params, rounded_nuclei):
+    def display_results(self, sim_df, sim_stats, target_data, dist_data, metric_type, params):
         self.fig.clear()
         valid_features = [f for f in core.selected_features if f in sim_df.columns]
         n_plots = len(valid_features)
 
         report = f"\n>>> ЗАПУСК №{self.run_counter}\n"
         report += (f"Параметри: conc={params[0]}, h_a={params[1]}, h_b={params[1]}, h_c={params[2]}, "
-                   f"order={params[3]}, wc={params[4]}, ws={params[5]}, nuclei={rounded_nuclei}\n")
+                   f"order={params[3]}, wc={params[4]}, ws={params[5]}, nuclei={int(round(params[7]))}\n"
+                   f"Кути: a={params[7]:.3f}, b={params[8]:.3f}, c={params[9]:.3f}\n")
         report += f"Метрика: {metric_type}\n"
 
         # 1. Розрахунок похибок (ідентично min.py)
@@ -184,6 +192,8 @@ class ManualOptimizerApp:
         self.result_text.insert(tk.END, report + "=" * 30 + "\n")
         self.result_text.see(tk.END)
 
+        limits = [[0, 0.25], [-0.15, 0.15], [0, 0.25]]
+
         # 2. Побудова графіків (завжди з гістограмою розподілу цілі)
         for i, feat in enumerate(valid_features):
             ax = self.fig.add_subplot(n_plots, 1, i + 1)
@@ -209,6 +219,8 @@ class ManualOptimizerApp:
 
             ax.set_title(f"Feature: {feat}")
             ax.legend(prop={'size': 7}, loc='upper right', bbox_to_anchor=(1.15, 1))
+
+            ax.set_xlim(limits[i][0], limits[i][1])
 
         self.fig.tight_layout()
         self.canvas.draw()
