@@ -1,0 +1,160 @@
+Property,Statistic,Value
+Area,Mean,0.0028
+,Std,0.0023
+,Median,0.0021
+,Mode,0.0005
+,Q1,0.0010
+,Q3,0.0038
+,IQR,0.0028
+,Range,0.0103
+Shape Factor,Mean,0.6991
+,Std,0.0481
+,Median,0.7006
+,Mode,0.5880
+,Q1,0.6706
+,Q3,0.7324
+,IQR,0.0618
+,Range,0.2706
+ECR,Mean,0.0269
+,Std,0.0123
+,Median,0.0256
+,Mode,0.0126
+,Q1,0.0180
+,Q3,0.0348
+,IQR,0.0168
+,Range,0.0533
+Scale Factor,Mean,1.1466
+,Std,0.1453
+,Median,1.1142
+,Mode,0.8999
+,Q1,1.0395
+,Q3,1.2292
+,IQR,0.1897
+,Range,0.6146
+Aspect Ratio,Mean,1.1662
+,Std,0.0850
+,Median,1.1683
+,Mode,1.1948
+,Q1,1.0997
+,Q3,1.2151
+,IQR,0.1155
+,Range,0.4807
+Compactness Ratio,Mean,0.9224
+,Std,0.0149
+,Median,0.9210
+,Mode,0.8999
+,Q1,0.9116
+,Q3,0.9302
+,IQR,0.0186
+,Range,0.0820
+area-to-ellipse Ratio,Mean,0.6939
+,Std,0.0173
+,Median,0.6994
+,Mode,0.6390
+,Q1,0.6851
+,Q3,0.7069
+,IQR,0.0218
+,Range,0.0794
+Orientation,Circular Mean,1.1591
+,Circular Std,0.5943
+,Circular Median,1.1653
+,Circular Q1,0.5952
+,Circular Q3,1.5353
+,Circular IQR,0.9401
+,Circular Range,1.8521
+Inertia Tensor XX,Mean,5.4480
+,Std,1.1208
+,Median,5.6125
+,Mode,1.7854
+,Q1,4.8133
+,Q3,6.2869
+,IQR,1.4736
+,Range,5.6254
+Inertia Tensor XY,Mean,-0.0871
+,Std,3.6839
+,Median,-0.9634
+,Mode,-5.6019
+,Q1,-3.5691
+,Q3,3.6265
+,IQR,7.1955
+,Range,11.1937
+Inertia Tensor YY,Mean,5.4610
+,Std,1.0556
+,Median,5.5149
+,Mode,2.1687
+,Q1,4.8434
+,Q3,6.3152
+,IQR,1.4718
+,Range,5.2211
+Inertia Tensor/Area XX,Mean,0.0888
+,Std,0.0260
+,Median,0.0845
+,Mode,0.0415
+,Q1,0.0700
+,Q3,0.1064
+,IQR,0.0364
+,Range,0.1178
+Inertia Tensor/Area XY,Mean,-0.0006
+,Std,0.0211
+,Median,-0.0016
+,Mode,-0.0658
+,Q1,-0.0117
+,Q3,0.0122
+,IQR,0.0239
+,Range,0.1203
+Inertia Tensor/Area YY,Mean,0.0901
+,Std,0.0275
+,Median,0.0869
+,Mode,0.0446
+,Q1,0.0702
+,Q3,0.1051
+,IQR,0.0349
+,Range,0.1208
+I_Principal_Max,Mean,5.7670
+,Std,1.0155
+,Median,5.9006
+,Mode,2.2088
+,Q1,5.2320
+,Q3,6.4932
+,IQR,1.2611
+,Range,5.2267
+I_Principal_Min,Mean,5.0837
+,Std,1.1272
+,Median,5.2754
+,Mode,1.7246
+,Q1,4.4352
+,Q3,5.9388
+,IQR,1.5035
+,Range,5.2940
+I_Anisotropy,Mean,1.4460
+,Std,0.3166
+,Median,1.3736
+,Mode,0.9186
+,Q1,1.2116
+,Q3,1.6259
+,IQR,0.4144
+,Range,1.3293
+I_Area_Principal_Max,Mean,0.1188
+,Std,0.0220
+,Median,0.1128
+,Mode,0.0859
+,Q1,0.1031
+,Q3,0.1282
+,IQR,0.0251
+,Range,0.0950
+I_Area_Principal_Min,Mean,0.0600
+,Std,0.0104
+,Median,0.0605
+,Mode,0.0388
+,Q1,0.0523
+,Q3,0.0676
+,IQR,0.0153
+,Range,0.0463
+I_Area_Anisotropy,Mean,1.4460
+,Std,0.3166
+,Median,1.3736
+,Mode,0.9186
+,Q1,1.2116
+,Q3,1.6259
+,IQR,0.4144
+,Range,1.3293

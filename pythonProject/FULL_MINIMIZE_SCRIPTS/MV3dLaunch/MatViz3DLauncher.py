@@ -15,7 +15,8 @@ class MatViz3DLauncher:
 
     def start(self, size, concentration, halfaxis_a, halfaxis_b, halfaxis_c,
               orientation_angle_a, orientation_angle_b, orientation_angle_c,
-              wave_coefficient, wave_spread, initial_nuclei_count, ellipse_order, output_file):
+              wave_coefficient, wave_spread, initial_nuclei_count, ellipse_order, stefan_number, output_file,
+              hasProbParameters=True):
         """
         Run MatViz3D with the given parameters.
 
@@ -46,9 +47,12 @@ class MatViz3DLauncher:
             '--initial_nuclei_count', str(initial_nuclei_count),
             '--algorithm', 'Probability Algorithm',
             '--ellipse_order', str(ellipse_order),
-            '--autostart',
+            '--stefan_number', str(stefan_number),
+            '--hasProbParameters', str(hasProbParameters),
+            '--seed', str(0),
             '--output', output_file,
-            '--nogui'
+            '--autostart',
+            '--nogui',
         ]
 
         try:
